@@ -76,7 +76,7 @@ function hand(x,y,dx,dy,type,col){
 }
 function arm(K,sd,A,o,br,sh){
  const sx=sd*70,sy=-548,l1=K.ua||130,l2=K.fa||120;let ex,ey,hx,hy;
- if(A.to){const tx=(A.to[0]-o.x)/o.s-sh,ty=(A.to[1]-o.y)/o.s-br+(o._ex||0);const r=ik(sx,sy,tx,ty,l1,l2,A.bend!==undefined?A.bend:-sd);ex=r.ex;ey=r.ey;hx=r.hx;hy=r.hy;}
+ if(A.to){const tx=(A.to[0]-o.x)/(o.s*(o.sx||1))-sh,ty=(A.to[1]-o.y)/o.s-br+(o._ex||0);const r=ik(sx,sy,tx,ty,l1,l2,A.bend!==undefined?A.bend:-sd);ex=r.ex;ey=r.ey;hx=r.hx;hy=r.hy;}
  else{const a1=A.a[0],a2=A.a[1];ex=sx+Math.sin(a1)*l1;ey=sy+Math.cos(a1)*l1;hx=ex+Math.sin(a1+a2)*l2;hy=ey+Math.cos(a1+a2)*l2;}
  cap(sx,sy,ex,ey,24,K.sleeveUp);cap(ex,ey,hx,hy,21,K.sleeveLow);
  if(K.sleeveLow!==K.skin){}
@@ -258,7 +258,8 @@ function brackets(lt,x0,y0,x1,y1,col,label){
 const SUBS_RAW=[
  [0.05,1.72,'МУЖИК С ФОНАРИКОМ *УЛЫБАЕТСЯ.'],
  [3.78,4.85,'ОН ИДЁТ ВСЁ *БЫСТРЕЕ.'],
- [5.15,7.2,'ТЫ ХВАТАЕШЬ ЕЁ ЗА РУКУ — И *БЕЖИШЬ К СВЕТУ.'],
+ [5.17,5.85,'ТЫ ХВАТАЕШЬ ЕЁ ЗА РУКУ —'],
+ [6.12,7.2,'И *БЕЖИШЬ К СВЕТУ.'],
  [7.6,8.75,'УТРОМ В ЕГО БЛОКНОТЕ —'],
  [9.12,9.75,'ТВОЁ *ИМЯ.'],
 ];
@@ -522,7 +523,7 @@ function hoodieTorso(K,o){
 }
 function coatTorso(K,o){
  rr(-22,-612,44,52,10);fs(K.skin);
- ctx.beginPath();ctx.moveTo(-78,-560);ctx.quadraticCurveTo(-80,-598,-40,-600);ctx.lineTo(40,-600);ctx.quadraticCurveTo(80,-598,78,-560);ctx.lineTo(114,-126);ctx.quadraticCurveTo(0,-108,-114,-126);ctx.closePath();fs(K.coat);
+ ctx.beginPath();ctx.moveTo(-78,-560);ctx.quadraticCurveTo(-80,-598,-40,-600);ctx.lineTo(40,-600);ctx.quadraticCurveTo(80,-598,78,-560);const fl=(o.flap||0)*30;ctx.lineTo(114+fl,-126+Math.abs(fl)*0.3);ctx.quadraticCurveTo(fl*0.7,-104,-114+fl,-126-Math.abs(fl)*0.2);ctx.closePath();fs(K.coat);
  [-1,1].forEach(sd=>{ctx.beginPath();ctx.moveTo(sd*40,-600);ctx.lineTo(sd*4,-466);ctx.lineTo(sd*60,-516);ctx.closePath();fs(shade(K.coat,-0.25),4);});
  ctx.beginPath();ctx.moveTo(4,-466);ctx.lineTo(8,-122);ctx.lineWidth=4/SC;ctx.strokeStyle='rgba(0,0,0,0.35)';ctx.stroke();
  [-430,-300,-220].forEach(y=>{circ(22,y,8);fs('#1A1A1A',3);});
@@ -570,6 +571,7 @@ const _st2=shirtTorso;
 shirtTorso=function(K,o){if(o.kind==='boy')return hoodieTorso(K,Object.assign({},o,{noPhones:true}));if(o.kind==='man')return coatTorso(K,o);if(o.kind==='girl')return mashaTorso(K);return _st2(K,o);};
 const _hd2=head;
 head=function(K,o,t){
+ if(o.htilt){ctx.save();ctx.translate(0,-612);ctx.rotate(o.htilt);ctx.translate(0,612);const q=o.htilt;o.htilt=0;head(K,o,t);o.htilt=q;ctx.restore();return;}
  const hr=K.headR,cy=-690;
  if(o.kind==='boy'){circ(-hr+2,cy+5,20);fs(K.skin);circ(hr-2,cy+5,20);fs(K.skin);circ(0,cy,hr);fs(K.skin);temaHair(K,cy,hr);face(K,o,t,cy);
   ctx.fillStyle='rgba(180,90,50,0.5)';[[-58,30],[-48,40],[-66,42],[58,30],[48,40],[66,42]].forEach(([x,y])=>{circ(x+(o.turn||0)*22,cy+y,3.5);ctx.fill();});return;}
@@ -580,7 +582,7 @@ head=function(K,o,t){
   [-1,1].forEach(sd=>{ctx.beginPath();ctx.moveTo(sd*hr*0.92,cy-hr*0.3);ctx.lineTo(sd*hr*1.02,cy+hr*0.12);ctx.lineTo(sd*hr*0.8,cy-hr*0.08);ctx.closePath();fs(K.hair,4);});
   ctx.beginPath();ctx.moveTo(-hr-4,cy-hr*0.32);ctx.bezierCurveTo(-hr-4,cy-hr*1.42,hr+4,cy-hr*1.42,hr+4,cy-hr*0.32);ctx.closePath();fs('#2E3A33');rr(-hr-10,cy-hr*0.54,2*hr+20,hr*0.34,hr*0.12);fs('#24302A');
   ctx.strokeStyle='rgba(0,0,0,0.18)';ctx.lineWidth=4/SC;for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(i*hr*0.26,cy-hr*0.56);ctx.lineTo(i*hr*0.2,cy-hr*1.1);ctx.stroke();}
-  face(K,o,t,cy);return;}
+  face(K,Object.assign({},o,{turn:o.hturn!==undefined?o.hturn:o.turn}),t,cy);return;}
  _hd2(K,o,t);
 };
 // убрать наушники у мальчика
@@ -614,7 +616,7 @@ function I1(lt,t){
  bbg('stop',bgStop,4);
  const talk=t>1.95&&t<3.75,beck=Math.sin(t*5);
  const TP=[780,1600],tang=Math.PI/2-0.25;
- const P=litPerson({kind:'man',x:580,y:2180,s:1.58,t,turn:-1,la:{to:[250+beck*25,1290-beck*25],hand:'open'},ra:{to:TP,hand:'fist'},mood:'creepy',lids:[0.2,0.2],irisS:0.75,look:[-6,1],mouth:talk?'lip':(t<1.95?'smile':'grin'),noBlink:true,seed:2},
+ const P=litPerson({kind:'man',x:580,y:2180,s:1.58,t,turn:-1,la:{to:[250+beck*25,1290-beck*25],hand:'open'},ra:{to:TP,hand:'fist'},mood:'creepy',lids:[0.2,0.2],irisS:0.75,look:[-6,1],mouth:talk?'lip':(t<1.95?'smile':'grin'),noBlink:true,breathe:false,htilt:Math.sin(t*0.9)*0.05+(t>3.0?0.08*ease((t-3)/0.5):0),flap:Math.sin(t*1.4)*0.25,seed:2},
   {shadow:{a:0.3,dx:60,dy:-10},rim:{col:'rgba(255,220,150,0.8)',dx:-7,dy:-3},shade:{x0:w2s(380,0)[0],y0:0,x1:w2s(760,0)[0],y1:0,a:0.45,warm:[...w2s(560,960),300]}});
  flashlight(TP[0],TP[1],tang);
  const tip=w2s(TP[0]+Math.cos(tang)*55,TP[1]+Math.sin(tang)*55);S1H=w2s(P.head[0],P.head[1]-150);
@@ -624,43 +626,74 @@ function I1(lt,t){
  grade('#2A4C9A',0.3);
 }
 function U1(lt,t){bubble(t-1.95,540,330,['ПОКАЖУ КОРОТКУЮ','ДОРОГУ.'],S1H,'НЕЗНАКОМЕЦ');}
-// S2 · 3.75–5.1 · тропа, он идёт всё быстрее
+// S2 · 3.75–5.1 · тропа: он оглядывается через плечо, потом отворачивается и ускоряется
 function I2(lt,t){
- const [hx,hy]=hand_held(t,5),off=lt*520+lt*lt*140,sp=8+lt*3;
- ctx.save();cam(1.0,540+hx,980+hy);
+ const [hx,hy]=hand_held(t,4);
+ const turnK=backOut(clamp((lt-0.72)/0.16,0,1));          // резкий поворот головы вперёд с перехлёстом
+ const fast=clamp((lt-0.9)/0.3,0,1);
+ const off=lt*360+Math.max(0,lt-0.9)*Math.max(0,lt-0.9)*520;
+ ctx.save();cam(1.0+lt*0.03,560+hx,980+hy);
  bbg('ffar',bgForestFar,5);forestMid(off);
- const Wm=walkPose(t,sp+1,1),Wb=walkPose(t+0.2,sp,1),Wg=walkPose(t+0.45,sp*1.15,1);
- const TP=[960,1250],tang=0.9;
- litPerson({kind:'man',x:790,y:1720+Wm.bob,s:0.84,t,turn:1,ll:Wm.ll,rl:Wm.rl,la:{a:[-0.3+Math.sin(t*sp)*0.3,0.3],hand:'open'},ra:{to:TP,hand:'fist'},mood:'neutral',look:[10,2],mouth:'flat',seed:3},{rim:{col:'rgba(255,220,150,0.7)',dx:6,dy:-3}});
- flashlight(TP[0],TP[1],tang);
- const HJ=[320,1310];
- litPerson({kind:'boy',x:440,y:1730+Wb.bob,s:0.84,t,turn:1,ll:Wb.ll,rl:Wb.rl,la:{to:HJ,hand:'fist'},ra:{a:[0.3-Math.sin(t*sp)*0.3,0.3],hand:'open'},mood:'scared',eyeS:1.1,look:[10,0],mouth:'worried',sweat:true,seed:4},{rim:{col:'rgba(190,215,255,0.6)',dx:5,dy:-3}});
- litPerson({kind:'girl',x:220,y:1740+Wg.bob,s:0.84,t,turn:1,ll:Wg.ll,rl:Wg.rl,la:{a:[-0.2,0.2],hand:'open'},ra:{to:HJ,hand:'fist'},mood:'scared',look:[10,-3],mouth:'oh',sway:Math.sin(t*sp)*0.1,seed:5},{rim:{col:'rgba(190,215,255,0.6)',dx:5,dy:-3}});
+ // мужик: роботоподобная походка — маленький шаг, без покачиваний, рука висит
+ const msp=6+fast*3.5,Wm=walkPose(t,msp,1);
+ const TP=[960,1270],tang=0.95;
+ const hturn=lerp(-1,1,turnK),look=lt<0.72?[-10,0]:[10,2];
+ const MP=litPerson({kind:'man',x:790,y:1720,s:0.84,t,turn:1,hturn,htilt:(1-turnK)*0.14,ll:[Wm.ll[0]*0.6,Wm.ll[1]*0.35],rl:[Wm.rl[0]*0.6,Wm.rl[1]*0.35],breathe:false,
+  la:{a:[-0.04,0.04],hand:'open'},ra:{to:TP,hand:'fist'},mood:lt<0.72?'creepy':'neutral',lids:lt<0.72?[0.26,0.26]:[0,0],irisS:0.7,look,mouth:lt<0.72?'smile':'flat',noBlink:true,flap:Math.sin(t*msp*2)*0.35+Math.sin(t*1.3)*0.15,seed:3},{rim:{col:'rgba(255,220,150,0.7)',dx:6,dy:-3}});
+ flashlight(TP[0],TP[1],tang);const MH=w2s(MP.head[0],MP.head[1]);
+ // дети: идут неуверенно, мальчик косится назад в конце
+ const sp=7.5+fast*3,Wb=walkPose(t+0.2,sp,1),Wg=walkPose(t+0.45,sp*1.15,1);
+ const HJ=[322,1312];
+ litPerson({kind:'boy',x:440,y:1730+Wb.bob,s:0.84,t,turn:1,ll:Wb.ll,rl:Wb.rl,la:{to:HJ,hand:'fist'},ra:{a:[0.25-Math.sin(t*sp)*0.25,0.3],hand:'open'},mood:'scared',eyeS:1.1,look:lt>1.0?[-10,0]:[10,0],mouth:'worried',sweat:true,seed:4},{rim:{col:'rgba(190,215,255,0.6)',dx:5,dy:-3}});
+ litPerson({kind:'girl',x:225,y:1740+Wg.bob,s:0.84,t,turn:1,rot:-0.04,ll:Wg.ll,rl:Wg.rl,la:{a:[-0.2,0.2],hand:'fist'},ra:{to:HJ,hand:'fist'},mood:'scared',look:[10,-3],mouth:'oh',sway:Math.sin(t*sp)*0.12,seed:5},{rim:{col:'rgba(190,215,255,0.6)',dx:5,dy:-3}});
  fgDark(off);
  const tip=w2s(TP[0]+Math.cos(tang)*55,TP[1]+Math.sin(tang)*55);
  ctx.restore();
- lightPass([{type:'cone',x:tip[0],y:tip[1],ang:1.15,spread:0.3,len:620,k:1,warm:0.55},{type:'radial',x:tip[0],y:tip[1],r:90,k:1,warm:0.6},{type:'radial',x:520,y:1250,r:700,k:0.7},{type:'radial',x:860,y:240,r:300,k:0.5}],0.74);
+ lightPass([{type:'cone',x:tip[0],y:tip[1],ang:1.2,spread:0.28,len:600,k:1,warm:0.55},{type:'radial',x:tip[0],y:tip[1],r:90,k:1,warm:0.6},{type:'radial',x:540,y:1250,r:700,k:0.7},{type:'radial',x:860,y:240,r:300,k:0.5},{type:'radial',x:MH[0],y:MH[1]+30,r:230,k:lt<0.8?0.85:0.4,warm:lt<0.8?0.2:0}],0.74);
  grade('#1E3C8C',0.4);
 }
-// S3 · 5.1–7.5 · разворот и бег к свету
+// S3a · 5.1–6.1 · разворот фонаря: сначала голова, потом замах назад, рывок с перехлёстом, свет в глаза
+function I3a(lt,t){
+ const [hx,hy]=hand_held(t,3+(lt>0.55?7:0));
+ const head=backOut(clamp(lt/0.16,0,1));
+ const A=kf(lt,[[0,1.45],[0.24,1.45],[0.42,1.95],[0.58,Math.PI+0.28],[0.72,Math.PI-0.06],[0.82,Math.PI]]);
+ const R=kf(lt,[[0,0],[0.24,0],[0.42,-60],[0.58,90],[0.72,60],[1,62]]);
+ ctx.save();cam(1.55+lt*0.12,600+hx,1290+hy);
+ bbg('ffar',bgForestFar,5);forestMid(400);
+ const sh=[640,1235],arm=300;
+ const TP=[sh[0]+Math.cos(A)*arm*0.75+R*0.2,sh[1]+Math.sin(A)*arm*0.75];
+ const P=litPerson({kind:'man',x:620,y:2120,s:1.15,t,turn:1,hturn:lerp(1,-1,head),htilt:kf(lt,[[0,0],[0.3,0],[0.5,0.1],[1,0.08]]),breathe:false,
+  la:{a:[-0.05,0.05],hand:'open'},ra:{to:TP,hand:'fist'},mood:'creepy',lids:[0.22,0.22],irisS:0.6,look:[-10,0],mouth:lt>0.6?'grin':'smile',noBlink:true,flap:Math.sin(t*1.5)*0.2+kf(lt,[[0.4,0],[0.6,-0.6],[0.9,0.2]]),seed:3},
+  {rim:{col:'rgba(190,215,255,0.8)',dx:6,dy:-3},shade:{x0:w2s(800,0)[0],y0:0,x1:w2s(450,0)[0],y1:0,a:0.4}});
+ flashlight(TP[0],TP[1],A);
+ const tip=w2s(TP[0]+Math.cos(A)*55,TP[1]+Math.sin(A)*55);
+ ctx.restore();
+ const hit=clamp((lt-0.6)/0.3,0,1);
+ lightPass([{type:'cone',x:tip[0],y:tip[1],ang:A,spread:0.3,len:1500,k:1,warm:0.4+hit*0.4},{type:'radial',x:tip[0],y:tip[1],r:120+hit*300,k:1,warm:0.6+hit*0.5},{type:'radial',x:w2s(P.head[0],P.head[1])[0],y:w2s(P.head[0],P.head[1])[1]+40,r:340,k:0.85}],0.8);
+ grade('#1E3C8C',0.35);
+ if(lt>0.86){ctx.fillStyle=`rgba(255,248,225,${clamp((lt-0.86)/0.1,0,1)})`;ctx.fillRect(0,0,W,H);}
+}
+// S3b · 6.1–7.5 · бег к свету: мальчик тянет девочку за руку, она отстаёт
 function I3(lt,t){
- const [hx,hy]=hand_held(t*1.4,8),off=-lt*950;
+ const [hx,hy]=hand_held(t*1.4,8),off=-lt*950-200;
  ctx.save();cam(1.05,540+hx,1000+hy);
  bbg('ffar',bgForestFar,5);forestMid(off);
- const mt=easeOut(lt/2.4),Rm=runPose(t,10,0.8);
- const mx=lerp(1050,950,mt),my=1360;
- person(Object.assign({kind:'man',x:mx,y:my+Rm.bob*0.4,s:0.36,t,turn:-1,sx:-1,mood:'creepy',mouth:'grin',noBlink:true,seed:6},Rm,{ra:{a:[1.4,-0.2],hand:'fist'}}));
+ const mt=easeOut(lt/1.6),Rm=runPose(t,10,0.8);
+ const mx=lerp(1080,960,mt),my=1360;
+ person(Object.assign({kind:'man',x:mx,y:my+Rm.bob*0.4,s:0.36,t,turn:-1,sx:-1,mood:'creepy',mouth:'grin',noBlink:true,flap:Math.sin(t*20)*0.5,seed:6},Rm,{ra:{a:[1.4,-0.2],hand:'fist'}}));
  const tipW=[mx-120,my-260];
- const Rb=runPose(t,13),Rg=runPose(t+0.18,13);
- litPerson(Object.assign({kind:'boy',x:450,y:1840+Rb.bob,s:0.88,t,turn:1,sx:-1,rot:0.15,mood:'terror',mouth:'shout',eyeS:1.15,sweat:true,noBlink:true,seed:7},Rb,{ra:{a:[-1.25,0.2],hand:'open'}}),{rim:{col:'rgba(255,230,170,0.9)',dx:-7,dy:-3}});
- litPerson(Object.assign({kind:'girl',x:720,y:1850+Rg.bob,s:0.88,t,turn:1,sx:-1,rot:0.15,mood:'terror',mouth:'scared',eyeS:1.15,noBlink:true,sway:Math.sin(t*13)*0.3,seed:8},Rg,{la:{a:[1.25,-0.3],hand:'open'}}),{rim:{col:'rgba(255,230,170,0.9)',dx:-7,dy:-3}});
+ const Rb=runPose(t,13),Rg=runPose(t+0.18,12,0.75);
+ const bx=450,gx=760+Math.sin(t*6)*14,by=1840+Rb.bob,gy=1850+Rg.bob*0.7;
+ const HJ=[(bx+gx)/2+10,1360+Math.sin(t*13)*10];
+ litPerson(Object.assign({kind:'boy',x:bx,y:by,s:0.88,t,turn:1,sx:-1,mood:'terror',mouth:'shout',eyeS:1.15,sweat:true,noBlink:true,seed:7},Rb,{ra:{to:HJ,hand:'fist',bend:1}}),{rim:{col:'rgba(255,230,170,0.9)',dx:-7,dy:-3}});
+ litPerson(Object.assign({kind:'girl',x:gx,y:gy,s:0.88,t,turn:1,sx:-1,mood:'terror',mouth:'scared',eyeS:1.15,noBlink:true,sway:Math.sin(t*12)*0.35,seed:8},Rg,{la:{to:HJ,hand:'fist',bend:-1}}),{rim:{col:'rgba(255,230,170,0.9)',dx:-7,dy:-3}});
  fgDark(off);
  const tip=w2s(tipW[0],tipW[1]);
  ctx.restore();
  const ang=Math.atan2(1450-tip[1],420-tip[0]);
- lightPass([{type:'cone',x:tip[0],y:tip[1],ang,spread:0.22,len:1300,k:0.95,warm:0.5},{type:'radial',x:tip[0],y:tip[1],r:120,k:1,warm:0.8},{type:'radial',x:-60,y:900,r:760,k:0.9,warm:0.45},{type:'radial',x:560,y:1350,r:560,k:0.7}],0.76);
- ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(tip[0],tip[1],0,tip[0],tip[1],120);g.addColorStop(0,'rgba(255,245,210,0.9)');g.addColorStop(1,'rgba(255,245,210,0)');ctx.fillStyle=g;ctx.fillRect(tip[0]-120,tip[1]-120,240,240);ctx.restore();
+ lightPass([{type:'cone',x:tip[0],y:tip[1],ang,spread:0.22,len:1300,k:0.95,warm:0.5},{type:'radial',x:tip[0],y:tip[1],r:110,k:1,warm:0.8},{type:'radial',x:-60,y:900,r:760,k:0.9,warm:0.45},{type:'radial',x:560,y:1350,r:560,k:0.7}],0.76);
  grade('#1E3C8C',0.38);
+ if(lt<0.12){ctx.fillStyle=`rgba(255,248,225,${1-lt/0.12})`;ctx.fillRect(0,0,W,H);}
 }
 // S4 · 7.5–10 · утро, сумка, блокнот
 function bgBench(){ctx.fillStyle='#8E9AA4';ctx.fillRect(0,0,W,H);for(let i=0;i<6;i++){const y=60+i*320;rr(-30,y,W+60,270,16);fs('#A8744A',6);ctx.strokeStyle='rgba(90,50,20,0.35)';ctx.lineWidth=4;for(let k=0;k<5;k++){ctx.beginPath();ctx.moveTo(0,y+40+k*46);ctx.bezierCurveTo(300,y+30+k*46,700,y+60+k*46,W,y+40+k*46);ctx.stroke();}}
@@ -690,7 +723,8 @@ function I4(lt,t){
 const SCENES=[
  {t0:0,   name:'Фонарь',  draw:I1,ui:U1},
  {t0:3.75,name:'Тропа',   draw:I2,subY:1660},
- {t0:5.1, name:'Бег',     draw:I3,wh:1,subY:640},
+ {t0:5.1, name:'Фонарь на нас',draw:I3a,subY:1640},
+ {t0:6.1, name:'Бег',     draw:I3,subY:640},
  {t0:7.5, name:'Блокнот', draw:I4,wh:1,subY:1620},
 ];
 function sceneIndex(t){for(let i=SCENES.length-1;i>=0;i--)if(t>=SCENES[i].t0)return i;return 0;}
