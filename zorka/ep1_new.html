@@ -1105,7 +1105,7 @@ function render(tn){
  if(S.vig!==false)ctx.drawImage(layer('vig',drawVig),0,0);
  if(S.ui){ctx.save();S.ui(lt,t);ctx.restore();}
  if(S.wh&&lt<0.3)whooshOverlay(wk);
- drawSubs(tn);
+ drawSubs(tn);T=tn;
  return i;
 }
 
