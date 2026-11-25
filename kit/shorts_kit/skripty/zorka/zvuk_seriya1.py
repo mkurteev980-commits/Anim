@@ -47,7 +47,7 @@ add(10.12,whoosh(0.3),0.25)
 # линейка: горн
 notes=[(392,0.25),(523,0.25),(659,0.25),(784,0.6)];x=16.0
 for f,d in notes:
-    t=np.arange(int(d*SR))/SR;vib=1+0.01*np.sin(2*np.pi*6*t);ph=np.cumsum(f*vib)/SR;s=sum((1/k)*np.sin(2*np.pi*k*ph) for k in range(1,7))*np.minimum(1,t/0.03)*np.minimum(1,(d-t)/0.05);add(x,norm(s),0.3);x+=d+0.03
+    t=np.arange(int(d*SR))/SR;vib=1+0.01*np.sin(2*np.pi*6*t);ph=np.cumsum(f*vib)/SR;s=sum((1/k)*np.sin(2*np.pi*k*ph) for k in range(1,7))*np.minimum(1,t/0.03)*np.minimum(1,(d-t)/0.05);add(x,norm(s),0.14);x+=d+0.03
 crickets(15.9,19.6,0.06)
 add(19.6,norm(boom(1.3,42)),0.9);drone(19.6,2.3,45,0.15)
 # капли
@@ -73,9 +73,10 @@ t=np.arange(int(0.12*SR))/SR;add(47.4,np.sin(2*np.pi*(700+900*np.exp(-t*30))*t)*
 nv=np.load('nv.npy');gv=np.load('gv.npy')
 vo=nv+gv;vo=vo/np.abs(vo).max()*0.95
 ev=np.abs(vo);k=int(0.06*SR);ev=np.convolve(ev,np.ones(k)/k,'same');ev=np.maximum.accumulate(ev[::-1])[::-1]*0+ev
-duck=1-0.7*np.clip(ev/0.03,0,1)
-sm=int(0.08*SR);duck=np.convolve(duck,np.ones(sm)/sm,'same')
+duck=1-0.92*np.clip(ev/0.015,0,1)
+sm=int(0.08*SR);duck=np.convolve(duck,np.ones(int(0.18*SR))/int(0.18*SR),'same')
 n0=min(len(vo),len(out));vo=vo[:n0];duck=duck[:n0];mix=vo+out[:n0]*0.55*duck;mix=np.tanh(mix*1.05)/np.tanh(1.05)*0.95
+np.save('sfx_raw.npy',o if 'o' in dir() else out[:n0]);np.save('duck.npy',duck);np.save('vo_norm.npy',vo)
 pcm=(np.stack([mix,mix],1)*32767).clip(-32768,32767).astype('<i2')
 with wave.open('mix.wav','wb') as f:f.setnchannels(2);f.setsampwidth(2);f.setframerate(SR);f.writeframes(pcm.tobytes())
 print('ok')

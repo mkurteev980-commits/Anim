@@ -915,7 +915,7 @@ function person(o){
  return{mouth:[o.x,o.y+(-628-EX+br)*s],head:[o.x+(o.turn||0)*22*s,o.y-(690+EX)*s]};
 }
 // ---- общие элементы серии
-function stamp(lt,x,y,txt){if(lt<0)return;const k=lt<0.14?lerp(2.4,1,lt/0.14):1,sh=lt<0.3?Math.sin(lt*120)*6*(1-lt/0.3):0;
+function stamp(lt,x,y,txt){if(lt<0)return;const k=lt<0.14?lerp(1.2,1,lt/0.14):1,sh=lt<0.3?Math.sin(lt*120)*6*(1-lt/0.3):0;
  ctx.save();ctx.translate(x+sh,y);ctx.rotate(-0.18);ctx.scale(k,k);ctx.globalAlpha=Math.min(1,lt/0.08);
  ctx.font='900 64px Montserrat';const w=ctx.measureText(txt).width+70;rr(-w/2,-62,w,124,14);ctx.lineWidth=10;ctx.strokeStyle='#E53935';ctx.stroke();rr(-w/2+12,-50,w-24,100,8);ctx.lineWidth=4;ctx.stroke();
  ctx.fillStyle='#E53935';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,0,4);ctx.restore();}
@@ -1071,7 +1071,7 @@ function EF(lt,t){
  if(lt>4.6){ctx.save();ctx.globalAlpha=ease((lt-4.6)/0.4);ctx.font='900 40px Montserrat';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.lineWidth=10;ctx.strokeStyle=OL;ctx.strokeText('СЕРИЯ 2 — ЗАВТРА',540,1250);ctx.fillText('СЕРИЯ 2 — ЗАВТРА',540,1250);ctx.restore();}
 }
 const SCENES=[
- {t0:0,   name:'Правила',  draw:E1,vig:true},
+ {t0:0,   name:'Правила',  draw:E1,vig:true,subY:1650},
  {t0:3.0, name:'Правило 1',draw:E2,vig:false,subY:1640},
  {t0:5.6, name:'Глаза',    draw:E3,ui:UE3},
  {t0:8.6, name:'Дверь',    draw:E4,ui:UE4},
