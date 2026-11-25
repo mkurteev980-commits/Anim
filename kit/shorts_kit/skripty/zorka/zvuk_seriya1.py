@@ -61,15 +61,15 @@ w=norm(band(nz(18),60,700));w*=0.6+0.4*np.sin(2*np.pi*0.5*np.arange(len(w))/SR);
 for k in range(10):
     t0=33.9+k*0.6+rng.random()*0.2;t=np.arange(int(0.12*SR))/SR;add(t0,np.sin(2*np.pi*(1100+rng.random()*500)*t*(1+t*6))*np.exp(-t*40),0.14)
 beat(38.9,41.0)
-n=int(1.05*SR);t=np.arange(n)/SR;add(43.0,norm(band(nz(1.05),300,8000)*(t/1.05)**2.5),0.35)
-add(44.05,norm(boom(1.2,40)),1.0);add(44.05,norm(band(nz(0.7),200,6000)*env(0.7,6)),0.5)
-add(44.5,norm(band(nz(0.5),60,500)*np.sin(np.linspace(0,np.pi,int(0.5*SR)))),0.25)
+n=int(1.05*SR);t=np.arange(n)/SR;add(44.2,norm(band(nz(1.05),300,8000)*(t/1.05)**2.5),0.35)
+add(45.25,norm(boom(1.2,40)),1.0);add(45.25,norm(band(nz(0.7),200,6000)*env(0.7,6)),0.5)
+add(45.7,norm(band(nz(0.5),60,500)*np.sin(np.linspace(0,np.pi,int(0.5*SR)))),0.25)
 # выбор
-add(45.28,norm(band(nz(0.35),1500,12000)*env(0.35,12)),0.45);add(45.55,whoosh(0.35),0.45);add(45.62,norm(boom(0.8,50)),0.6)
-for k,t0 in enumerate([46.5,47.5,48.5]):
+add(46.48,norm(band(nz(0.35),1500,12000)*env(0.35,12)),0.45);add(46.75,whoosh(0.35),0.45);add(46.82,norm(boom(0.8,50)),0.6)
+for k,t0 in enumerate([47.7,48.7,49.7]):
     t=np.arange(int(0.08*SR))/SR;add(t0,np.sin(2*np.pi*(1200 if k<2 else 1600)*t)*np.exp(-t*60),0.4);add(t0+0.5,np.sin(2*np.pi*800*t)*np.exp(-t*60),0.28)
-t=np.arange(int(0.5*SR))/SR;add(49.5,np.sign(np.sin(2*np.pi*140*t))*np.exp(-t*5)*0.6,0.3)
-t=np.arange(int(0.12*SR))/SR;add(46.2,np.sin(2*np.pi*(700+900*np.exp(-t*30))*t)*np.exp(-t*25),0.22)
+t=np.arange(int(0.5*SR))/SR;add(50.7,np.sign(np.sin(2*np.pi*140*t))*np.exp(-t*5)*0.6,0.3)
+t=np.arange(int(0.12*SR))/SR;add(47.4,np.sin(2*np.pi*(700+900*np.exp(-t*30))*t)*np.exp(-t*25),0.22)
 nv=np.load('nv.npy');gv=np.load('gv.npy')
 vo=nv+gv;vo=vo/np.abs(vo).max()*0.95
 ev=np.abs(vo);k=int(0.06*SR);ev=np.convolve(ev,np.ones(k)/k,'same');ev=np.maximum.accumulate(ev[::-1])[::-1]*0+ev
